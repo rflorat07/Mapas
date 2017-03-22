@@ -13,7 +13,12 @@ export class AppComponent {
   lng: number = -84.006836;
   zoom: number = 16;
 
-  constructor(public _ms: MapasService) { }
+  marcadorSel: any = null;
+  draggable: string = '1';
+
+  constructor(public _ms: MapasService) {
+    this._ms.cargarMarcadores();
+  }
 
   clickMapa(evento) {
     let nuevoMarcador: Marcador = {
@@ -24,7 +29,36 @@ export class AppComponent {
     };
 
     this._ms.insertarMarcador(nuevoMarcador);
+    this._ms.guardarMarcadores();
   }
 
+  clickMarcador(marcador: Marcador, i: number) {
+    this.marcadorSel = marcador;
+    if (this.marcadorSel.draggable) {
+      this.draggable = '1';
+    } else {
+      this.draggable = '0';
+    }
+
+  }
+
+  cambiarDraggable() {
+    if (this.draggable === '1') {
+      this.marcadorSel.draggable = true;
+    } else {
+      this.marcadorSel.draggable = false;
+    }
+  }
+
+  dragEndMarcador(marcador: Marcador, evento) {
+    let lat = evento.coords.lat;
+    let lng = evento.coords.lng;
+
+    marcador.lat = lat;
+    marcador.lng = lng;
+
+    this._ms.guardarMarcadores();
+
+  }
 
 }
